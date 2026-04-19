@@ -1,6 +1,6 @@
-import NavBar from "@/components/NavBar";
-import SectionHeading from "@/components/SectionHeading";
-import TestimonialCard from "@/components/TestimonialCard";
+import NavBar from "../../components/NavBar";
+import SectionHeading from "../../components/SectionHeading";
+import TestimonialCard from "../../components/TestimonialCard";
 
 const testimonials = [
   { name: "Alice Nguyen", role: "Product Manager", quote: "Great collaboration and fast delivery." },

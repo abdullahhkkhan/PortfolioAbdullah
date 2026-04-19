@@ -1,6 +1,6 @@
 "use client";
  
-import NavBar from "@/components/NavBar";
+import NavBar from "../../components/NavBar";
 import { useEffect, useRef, useState } from "react";
  
 const SERVICE_DATA = [

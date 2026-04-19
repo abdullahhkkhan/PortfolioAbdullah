@@ -1,9 +1,9 @@
-import AboutSection from "@/components/AboutSection";
-import Footer from "@/components/Footer";
-import HeroSection from "@/components/HeroSection";
-import NavBar from "@/components/NavBar";
-import PortfolioSection from "@/components/PortfolioSection";
-import SkillsSection from "@/components/SkillsSection";
+import AboutSection from "../components/AboutSection";
+import Footer from "../components/Footer";
+import HeroSection from "../components/HeroSection";
+import NavBar from "../components/NavBar";
+import PortfolioSection from "../components/PortfolioSection";
+import SkillsSection from "../components/SkillsSection";
 import Link from "next/link";
 
 

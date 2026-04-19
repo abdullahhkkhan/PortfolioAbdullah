@@ -1,6 +1,6 @@
-import NavBar from "@/components/NavBar";
-import SectionHeading from "@/components/SectionHeading";
-import Card from "@/components/Card";
+import NavBar from "../..//components/NavBar";
+import SectionHeading from "../..//components/SectionHeading";
+import Card from "../..//components/Card";
 
 const skillData = [
   "Next.js",
