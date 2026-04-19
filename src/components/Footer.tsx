@@ -1,15 +1,15 @@
 "use client";
- 
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
- 
+
 const NAV_LINKS = [
   { href: "/",          label: "Home"    },
   { href: "/portfolio", label: "Work"    },
   { href: "/about",     label: "About"   },
   { href: "/contact",   label: "Contact" },
 ];
- 
+
 const SERVICES = [
   "MERN Stack Development",
   "WordPress & Shopify",
@@ -18,7 +18,7 @@ const SERVICES = [
   "UI / UX Engineering",
   "API Integration",
 ];
- 
+
 const SOCIALS = [
   {
     label: "GitHub",
@@ -61,7 +61,18 @@ const SOCIALS = [
     ),
   },
 ];
- 
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
+
 function SocialBtn({ item }: { item: (typeof SOCIALS)[0] }) {
   const [hovered, setHovered] = useState(false);
   return (
@@ -73,7 +84,7 @@ function SocialBtn({ item }: { item: (typeof SOCIALS)[0] }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        width: 40, height: 40, borderRadius: 4,
+        width: 44, height: 44, borderRadius: 4,
         display: "flex", alignItems: "center", justifyContent: "center",
         border: `1px solid ${hovered ? "rgba(0,255,209,0.5)" : "rgba(0,255,209,0.15)"}`,
         background: hovered ? "rgba(0,255,209,0.08)" : "transparent",
@@ -87,7 +98,7 @@ function SocialBtn({ item }: { item: (typeof SOCIALS)[0] }) {
     </a>
   );
 }
- 
+
 function FooterLink({ href, label }: { href: string; label: string }) {
   const [hovered, setHovered] = useState(false);
   return (
@@ -100,6 +111,7 @@ function FooterLink({ href, label }: { href: string; label: string }) {
         fontSize: 13, color: hovered ? "rgba(200,240,235,0.9)" : "rgba(180,220,215,0.5)",
         textDecoration: "none", transition: "color .2s",
         fontFamily: "'DM Sans',sans-serif",
+        padding: "4px 0", // bigger tap target
       }}
     >
       <span style={{
@@ -111,12 +123,13 @@ function FooterLink({ href, label }: { href: string; label: string }) {
     </Link>
   );
 }
- 
+
 export default function Footer() {
   const year = new Date().getFullYear();
   const [email, setEmail] = useState("");
   const [sent, setSent]   = useState(false);
- 
+  const isMobile = useIsMobile();
+
   useEffect(() => {
     const id = "footer-kf";
     if (document.getElementById(id)) return;
@@ -129,17 +142,19 @@ export default function Footer() {
     `;
     document.head.appendChild(s);
   }, []);
- 
+
   const handleSend = () => {
     if (!email.trim()) return;
     setSent(true);
     setEmail("");
     setTimeout(() => setSent(false), 3000);
   };
- 
+
+  const px = isMobile ? "16px" : "40px";
+
   return (
     <footer style={{ background: "#020b0e", position: "relative", overflow: "hidden" }}>
- 
+
       {/* grid bg */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none",
@@ -148,13 +163,13 @@ export default function Footer() {
           "linear-gradient(90deg,rgba(0,255,209,0.025) 1px,transparent 1px)",
         backgroundSize: "60px 60px",
       }} />
- 
+
       {/* top glow line */}
       <div style={{
         position: "absolute", top: 0, left: 0, right: 0, height: 1,
         background: "linear-gradient(90deg,transparent,rgba(0,255,209,0.45) 50%,transparent)",
       }} />
- 
+
       {/* ambient glow */}
       <div style={{
         position: "absolute", bottom: -180, left: "50%", transform: "translateX(-50%)",
@@ -162,13 +177,16 @@ export default function Footer() {
         background: "radial-gradient(ellipse,rgba(0,180,150,0.07) 0%,transparent 70%)",
         pointerEvents: "none",
       }} />
- 
+
       {/* ── CTA BANNER ── */}
-      <div style={{ borderBottom: "1px solid rgba(0,255,209,0.07)", padding: "56px 40px", position: "relative", zIndex: 1 }}>
+      <div style={{ borderBottom: "1px solid rgba(0,255,209,0.07)", padding: isMobile ? "40px 16px" : "56px 40px", position: "relative", zIndex: 1 }}>
         <div style={{
           maxWidth: 1280, margin: "0 auto",
-          display: "flex", alignItems: "center",
-          justifyContent: "space-between", flexWrap: "wrap", gap: 28,
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "flex-start" : "center",
+          justifyContent: "space-between",
+          gap: isMobile ? 24 : 28,
         }}>
           <div>
             <p style={{
@@ -178,23 +196,24 @@ export default function Footer() {
             }}>Ready to build something?</p>
             <h3 style={{
               fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800,
-              fontSize: "clamp(1.8rem,3vw,2.6rem)", textTransform: "uppercase",
+              fontSize: "clamp(1.6rem,5vw,2.6rem)", textTransform: "uppercase",
               color: "#fff", margin: 0, lineHeight: 1.1,
             }}>
               Let's Work{" "}
               <span style={{ color: "#00ffd1", textShadow: "0 0 30px rgba(0,255,209,0.35)" }}>Together</span>
             </h3>
           </div>
- 
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", width: isMobile ? "100%" : "auto" }}>
             <Link href="/contact" style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
+              display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8,
               padding: "13px 28px", background: "transparent",
               border: "1.5px solid #00ffd1", color: "#00ffd1",
               borderRadius: 3, textDecoration: "none",
               fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
               fontSize: 12, letterSpacing: "0.22em", textTransform: "uppercase",
               boxShadow: "0 0 18px rgba(0,255,209,0.12)",
+              flex: isMobile ? "1" : "none",
             }}>
               Get In Touch
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -202,31 +221,36 @@ export default function Footer() {
               </svg>
             </Link>
             <Link href="/portfolio" style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
+              display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8,
               padding: "13px 28px", background: "transparent",
               border: "1px solid rgba(0,255,209,0.22)", color: "rgba(200,230,225,0.65)",
               borderRadius: 3, textDecoration: "none",
               fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
               fontSize: 12, letterSpacing: "0.22em", textTransform: "uppercase",
+              flex: isMobile ? "1" : "none",
             }}>
               View Work
             </Link>
           </div>
         </div>
       </div>
- 
+
       {/* ── MAIN COLUMNS ── */}
       <div style={{
         maxWidth: 1280, margin: "0 auto",
-        padding: "64px 40px 52px",
+        padding: isMobile ? "48px 16px 40px" : "64px 40px 52px",
         display: "grid",
-        gridTemplateColumns: "2fr 1fr 1fr 1.5fr",
-        gap: "40px 48px",
+        // Mobile: 2-col grid for nav+services, brand + newsletter full width
+        gridTemplateColumns: isMobile ? "1fr 1fr" : "2fr 1fr 1fr 1.5fr",
+        gap: isMobile ? "36px 24px" : "40px 48px",
         position: "relative", zIndex: 1,
       }}>
- 
-        {/* ── Col 1: Brand ── */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+        {/* ── Col 1: Brand — full width on mobile ── */}
+        <div style={{
+          display: "flex", flexDirection: "column", gap: 20,
+          gridColumn: isMobile ? "1 / -1" : "auto", // span full width on mobile
+        }}>
           <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 10, width: "fit-content" }}>
             <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
               <polygon points="10,1 18,5.5 18,14.5 10,19 2,14.5 2,5.5"
@@ -235,24 +259,24 @@ export default function Footer() {
             </svg>
             <span style={{
               fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800,
-              fontSize: 20, letterSpacing: "0.12em", textTransform: "uppercase",
+              fontSize: isMobile ? 18 : 20, letterSpacing: "0.1em", textTransform: "uppercase",
               color: "#00ffd1", textShadow: "0 0 18px rgba(0,255,209,0.4)",
             }}>M. Abdullah Khan</span>
           </Link>
- 
+
           <p style={{
             fontSize: 13, lineHeight: 1.78,
             color: "rgba(180,220,215,0.5)",
-            maxWidth: 290, margin: 0,
+            maxWidth: isMobile ? "100%" : 290, margin: 0,
             fontFamily: "'DM Sans',sans-serif",
           }}>
             Full-stack developer specialising in MERN stack, WordPress, and e-commerce solutions — building digital experiences that push boundaries.
           </p>
- 
-          <div style={{ display: "flex", gap: 9 }}>
+
+          <div style={{ display: "flex", gap: 9, flexWrap: "wrap" }}>
             {SOCIALS.map(s => <SocialBtn key={s.label} item={s} />)}
           </div>
- 
+
           <div style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
             <span className="_ftDot" style={{
               width: 7, height: 7, borderRadius: "50%",
@@ -265,27 +289,27 @@ export default function Footer() {
             }}>Available for work</span>
           </div>
         </div>
- 
+
         {/* ── Col 2: Navigation ── */}
         <div>
           <p style={{
             fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
             fontSize: 10, letterSpacing: "0.34em", textTransform: "uppercase",
-            color: "#00ffd1", margin: "0 0 22px",
+            color: "#00ffd1", margin: "0 0 18px",
           }}>Navigation</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {NAV_LINKS.map(l => <FooterLink key={l.href} {...l} />)}
           </div>
         </div>
- 
+
         {/* ── Col 3: Services ── */}
         <div>
           <p style={{
             fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
             fontSize: 10, letterSpacing: "0.34em", textTransform: "uppercase",
-            color: "#00ffd1", margin: "0 0 22px",
+            color: "#00ffd1", margin: "0 0 18px",
           }}>Services</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {SERVICES.map(s => (
               <span key={s} style={{
                 display: "flex", alignItems: "center", gap: 10,
@@ -301,19 +325,19 @@ export default function Footer() {
             ))}
           </div>
         </div>
- 
-        {/* ── Col 4: Newsletter + Contact ── */}
-        <div>
+
+        {/* ── Col 4: Newsletter + Contact — full width on mobile ── */}
+        <div style={{ gridColumn: isMobile ? "1 / -1" : "auto" }}>
           <p style={{
             fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
             fontSize: 10, letterSpacing: "0.34em", textTransform: "uppercase",
             color: "#00ffd1", margin: "0 0 14px",
           }}>Stay Updated</p>
- 
+
           <p style={{ fontSize: 13, color: "rgba(180,220,215,0.5)", margin: "0 0 16px", lineHeight: 1.65, fontFamily: "'DM Sans',sans-serif" }}>
             Get notified about new projects and tech articles.
           </p>
- 
+
           {sent ? (
             <div style={{
               padding: "12px 16px",
@@ -339,8 +363,9 @@ export default function Footer() {
                 style={{
                   background: "rgba(0,20,18,0.6)",
                   border: "1px solid rgba(0,255,209,0.18)",
-                  borderRadius: 3, padding: "10px 14px",
-                  fontSize: 13, color: "rgba(200,235,230,0.85)",
+                  borderRadius: 3, padding: "11px 14px",
+                  // 16px prevents iOS auto-zoom
+                  fontSize: 16, color: "rgba(200,235,230,0.85)",
                   fontFamily: "'DM Sans',sans-serif",
                   outline: "none", width: "100%", boxSizing: "border-box",
                 }}
@@ -348,13 +373,15 @@ export default function Footer() {
               <button
                 onClick={handleSend}
                 style={{
-                  padding: "11px",
+                  padding: "13px",
                   background: "transparent",
                   border: "1.5px solid rgba(0,255,209,0.38)",
                   borderRadius: 3, cursor: "pointer",
                   fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
                   fontSize: 11, letterSpacing: "0.25em", textTransform: "uppercase",
                   color: "#00ffd1", transition: "background .2s, box-shadow .2s",
+                  // Comfortable tap target
+                  minHeight: 44,
                 }}
                 onMouseEnter={e => {
                   (e.currentTarget as HTMLElement).style.background = "rgba(0,255,209,0.08)";
@@ -369,9 +396,9 @@ export default function Footer() {
               </button>
             </div>
           )}
- 
+
           {/* quick contact links */}
-          <div style={{ marginTop: 26, display: "flex", flexDirection: "column", gap: 11 }}>
+          <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 12 }}>
             {[
               {
                 href: "mailto:abdullahhkkhann@gmail.com",
@@ -401,6 +428,8 @@ export default function Footer() {
                   fontSize: 13, color: "rgba(180,220,215,0.5)",
                   textDecoration: "none", transition: "color .2s",
                   fontFamily: "'DM Sans',sans-serif",
+                  // Allow long email to wrap
+                  wordBreak: "break-all",
                 }}
                 onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "rgba(0,255,209,0.9)"}
                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(180,220,215,0.5)"}
@@ -412,24 +441,28 @@ export default function Footer() {
           </div>
         </div>
       </div>
- 
+
       {/* ── BOTTOM BAR ── */}
       <div style={{ borderTop: "1px solid rgba(0,255,209,0.06)", position: "relative", zIndex: 1 }}>
         <div style={{
           maxWidth: 1280, margin: "0 auto",
-          padding: "18px 40px",
-          display: "flex", alignItems: "center",
-          justifyContent: "space-between", flexWrap: "wrap", gap: 10,
+          padding: isMobile ? "20px 16px" : "18px 40px",
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "center" : "center",
+          justifyContent: "space-between",
+          gap: isMobile ? 12 : 10,
+          textAlign: isMobile ? "center" : "left",
         }}>
           <span style={{
             fontFamily: "'Barlow Condensed',sans-serif",
             fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase",
             color: "rgba(0,255,209,0.22)",
           }}>
-            © {year} Aether Studios. All rights reserved.
+            © {year} All rights reserved.
           </span>
- 
-          <div style={{ display: "flex", gap: 22 }}>
+
+          <div style={{ display: "flex", gap: 20 }}>
             {["Privacy Policy", "Terms of Service"].map(t => (
               <Link key={t} href="#"
                 style={{
@@ -442,7 +475,7 @@ export default function Footer() {
               >{t}</Link>
             ))}
           </div>
- 
+
           <span style={{
             fontFamily: "'Barlow Condensed',sans-serif",
             fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase",
@@ -452,7 +485,7 @@ export default function Footer() {
           </span>
         </div>
       </div>
- 
+
     </footer>
   );
 }

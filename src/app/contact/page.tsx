@@ -119,7 +119,6 @@ function InputField({
   );
 }
 
-// Extracted so useState is called at the top level of a component, not inside .map()
 function SocialLink({ label, href, icon }: { label: string; href: string; icon: React.ReactNode }) {
   const [hov, setHov] = useState(false);
   return (
@@ -183,7 +182,16 @@ export default function ContactPage() {
   });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [isMobile, setIsMobile] = useState(false);
   const spinRef = useRef<HTMLDivElement>(null);
+
+  // Detect mobile
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   useEffect(() => {
     const id = "contact-kf";
@@ -200,6 +208,14 @@ export default function ContactPage() {
       ._ctD { animation: _ctFadeUp .5s .46s both }
       ._ctE { animation: _ctFadeUp .5s .58s both }
       ._ctDot { animation: _ctPulse 2.5s ease-in-out infinite }
+
+      /* Mobile input placeholder color */
+      input::placeholder, textarea::placeholder { color: rgba(0,255,209,0.2); }
+
+      /* Prevent iOS zoom on input focus */
+      @media (max-width: 768px) {
+        input, textarea, select { font-size: 16px !important; }
+      }
     `;
     document.head.appendChild(s);
   }, []);
@@ -222,7 +238,6 @@ export default function ContactPage() {
     onChange: (v: string) => setForm(f => ({ ...f, [k]: v })),
   });
 
-  // ── Real submit handler ──────────────────────────────────────────────────
   const handleSubmit = async () => {
     if (!form.name || !form.email || !form.message) return;
     setStatus("sending");
@@ -257,7 +272,8 @@ export default function ContactPage() {
       {/* ── PAGE HERO ── */}
       <section style={{
         position: "relative", overflow: "hidden",
-        padding: "80px 40px 64px", textAlign: "center",
+        padding: isMobile ? "60px 20px 48px" : "80px 40px 64px",
+        textAlign: "center",
         borderBottom: "1px solid rgba(0,255,209,0.07)",
       }}>
         {/* grid */}
@@ -275,9 +291,13 @@ export default function ContactPage() {
           background: "radial-gradient(ellipse,rgba(0,180,150,0.12) 0%,transparent 70%)",
           pointerEvents: "none",
         }} />
-        {/* ring system */}
-        <div style={{ position: "absolute", top: "50%", left: "50%", width: 360, height: 360, borderRadius: "50%", border: "1px solid rgba(0,255,209,0.08)", transform: "translate(-50%,-50%)" }} />
-        <div ref={spinRef} style={{ position: "absolute", top: "50%", left: "50%", width: 420, height: 420, borderRadius: "50%", border: "1px dashed rgba(0,255,209,0.12)", transform: "translate(-50%,-50%)" }} />
+        {/* ring system — hidden on mobile to avoid overflow */}
+        {!isMobile && (
+          <>
+            <div style={{ position: "absolute", top: "50%", left: "50%", width: 360, height: 360, borderRadius: "50%", border: "1px solid rgba(0,255,209,0.08)", transform: "translate(-50%,-50%)" }} />
+            <div ref={spinRef} style={{ position: "absolute", top: "50%", left: "50%", width: 420, height: 420, borderRadius: "50%", border: "1px dashed rgba(0,255,209,0.12)", transform: "translate(-50%,-50%)" }} />
+          </>
+        )}
 
         <div style={{ position: "relative", zIndex: 1 }}>
           <p className="_ctA" style={{
@@ -287,7 +307,7 @@ export default function ContactPage() {
           }}>Let's Connect</p>
           <h1 className="_ctB" style={{
             fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 900,
-            fontSize: "clamp(2.6rem,5vw,4.5rem)", textTransform: "uppercase",
+            fontSize: "clamp(2.2rem,8vw,4.5rem)", textTransform: "uppercase",
             color: "#00ffd1", margin: "0 0 16px", lineHeight: 1,
             textShadow: "0 0 40px rgba(0,255,209,0.3)",
           }}>Get In Touch</h1>
@@ -303,10 +323,19 @@ export default function ContactPage() {
       </section>
 
       {/* ── MAIN CONTENT ── */}
-      <section style={{ maxWidth: 1200, margin: "0 auto", padding: "80px 40px 120px", display: "grid", gridTemplateColumns: "1fr 1.6fr", gap: 60, alignItems: "start" }}>
+      <section style={{
+        maxWidth: 1200,
+        margin: "0 auto",
+        padding: isMobile ? "48px 16px 80px" : "80px 40px 120px",
+        display: "grid",
+        // Stack vertically on mobile, side-by-side on desktop
+        gridTemplateColumns: isMobile ? "1fr" : "1fr 1.6fr",
+        gap: isMobile ? 40 : 60,
+        alignItems: "start",
+      }}>
 
         {/* ── LEFT: contact info ── */}
-        <div className="_ctD" style={{ display: "flex", flexDirection: "column", gap: 36 }}>
+        <div className="_ctD" style={{ display: "flex", flexDirection: "column", gap: isMobile ? 28 : 36 }}>
           <div>
             <p style={{
               fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
@@ -342,7 +371,12 @@ export default function ContactPage() {
                       fontSize: 10, letterSpacing: "0.28em", textTransform: "uppercase",
                       color: "rgba(0,255,209,0.4)", margin: "0 0 4px",
                     }}>{item.label}</p>
-                    <p style={{ fontSize: 14, color: "rgba(210,240,235,0.8)", margin: 0, fontFamily: "'DM Sans',sans-serif" }}>
+                    <p style={{
+                      fontSize: 14, color: "rgba(210,240,235,0.8)", margin: 0,
+                      fontFamily: "'DM Sans',sans-serif",
+                      // Allow long email to wrap on mobile
+                      wordBreak: "break-all",
+                    }}>
                       {item.value}
                     </p>
                   </div>
@@ -414,7 +448,8 @@ export default function ContactPage() {
           position: "relative",
           background: "linear-gradient(145deg,rgba(0,30,25,0.55) 0%,rgba(3,13,16,0.85) 100%)",
           border: "1px solid rgba(0,255,209,0.12)",
-          borderRadius: 8, padding: "40px 36px",
+          borderRadius: 8,
+          padding: isMobile ? "28px 20px" : "40px 36px",
           boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
         }}>
           {/* corner accents */}
@@ -430,14 +465,14 @@ export default function ContactPage() {
           }}>Send a Message</p>
           <h2 style={{
             fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 800,
-            fontSize: "clamp(1.6rem,2.5vw,2rem)", textTransform: "uppercase",
-            color: "#fff", margin: "0 0 32px",
+            fontSize: "clamp(1.4rem,5vw,2rem)", textTransform: "uppercase",
+            color: "#fff", margin: "0 0 28px",
           }}>Start a Conversation</h2>
 
           {status === "sent" ? (
             <div style={{
               display: "flex", flexDirection: "column", alignItems: "center",
-              gap: 20, padding: "48px 24px", textAlign: "center",
+              gap: 20, padding: isMobile ? "32px 12px" : "48px 24px", textAlign: "center",
             }}>
               <div style={{
                 width: 64, height: 64, borderRadius: "50%",
@@ -471,13 +506,17 @@ export default function ContactPage() {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-              {/* name + email row */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+              {/* name + email: side by side on desktop, stacked on mobile */}
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+                gap: 18,
+              }}>
                 <InputField label="Full Name" id="name" placeholder="John Doe" required {...field("name")} />
                 <InputField label="Email Address" id="email" type="email" placeholder="john@email.com" required {...field("email")} />
               </div>
 
-              {/* subject dropdown */}
+              {/* subject pills */}
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <label htmlFor="subject" style={{
                   fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
@@ -488,15 +527,17 @@ export default function ContactPage() {
                   {SUBJECTS.map(s => (
                     <button key={s} onClick={() => setForm(f => ({ ...f, subject: s }))}
                       style={{
-                        padding: "6px 14px",
+                        padding: isMobile ? "8px 12px" : "6px 14px",
                         background: form.subject === s ? "rgba(0,255,209,0.12)" : "transparent",
                         border: `1px solid ${form.subject === s ? "#00ffd1" : "rgba(0,255,209,0.18)"}`,
                         borderRadius: 3, cursor: "pointer",
                         fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
-                        fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase",
+                        fontSize: isMobile ? 11 : 10, letterSpacing: "0.22em", textTransform: "uppercase",
                         color: form.subject === s ? "#00ffd1" : "rgba(180,220,215,0.45)",
                         transition: "all .2s",
                         boxShadow: form.subject === s ? "0 0 10px rgba(0,255,209,0.12)" : "none",
+                        // Make tap targets comfortable on mobile
+                        minHeight: isMobile ? 40 : "auto",
                       }}
                     >{s}</button>
                   ))}
@@ -504,7 +545,11 @@ export default function ContactPage() {
               </div>
 
               {/* message */}
-              <TextAreaField label="Message" id="message" placeholder="Tell me about your project, timeline, and budget..." required rows={6} {...field("message")} />
+              <TextAreaField
+                label="Message" id="message"
+                placeholder="Tell me about your project, timeline, and budget..."
+                required rows={isMobile ? 5 : 6} {...field("message")}
+              />
 
               {/* error banner */}
               {status === "error" && errorMsg && (
@@ -528,7 +573,7 @@ export default function ContactPage() {
                 disabled={status === "sending"}
                 style={{
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-                  padding: "15px 36px",
+                  padding: isMobile ? "16px 24px" : "15px 36px",
                   background: status === "sending" ? "rgba(0,255,209,0.05)" : "transparent",
                   border: "1.5px solid #00ffd1",
                   borderRadius: 4, cursor: status === "sending" ? "not-allowed" : "pointer",
@@ -538,6 +583,8 @@ export default function ContactPage() {
                   boxShadow: "0 0 18px rgba(0,255,209,0.12)",
                   transition: "background .2s, box-shadow .2s",
                   width: "100%", marginTop: 6,
+                  // Larger tap target on mobile
+                  minHeight: isMobile ? 52 : "auto",
                 }}
                 onMouseEnter={e => {
                   if (status !== "sending") {
