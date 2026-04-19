@@ -318,11 +318,11 @@ export default function AboutSection() {
 
             <h2 className="headline">
               Unveiling the<br />
-              Junior Developer
+              Full Stack Developer
             </h2>
 
             <p className="bio">
-              Dedicated and proactive Junior Developer with hands-on experience in
+              Dedicated and proactive Full Stack Developer with hands-on experience in
               full stack development using the MERN stack. Proven ability to manage
               and enhance complex systems, including Electronic Document Management
               Systems (EDMS) and innovative solutions for human cell banks. Adept at

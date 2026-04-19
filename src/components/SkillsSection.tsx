@@ -3,18 +3,21 @@
 import { useEffect, useRef, useState } from "react";
 
 const skills = [
-  { name: "JavaScript", level: 70, icon: "JS" },
-  { name: "HTML / CSS", level: 80, icon: "</>" },
-  { name: "React.js", level: 80, icon: "⚛" },
-  { name: "Next.js", level: 80, icon: "N" },
-  { name: "Node.js", level: 70, icon: "⬡" },
-  { name: "MongoDB", level: 70, icon: "🍃" },
-  { name: "MySQL", level: 60, icon: "🗄" },
-  { name: "WordPress", level: 80, icon: "W" },
-  { name: "Strapi", level: 80, icon: "S" },
-  { name: "Shopify", level: 80, icon: "◈" },
-  { name: "Wix", level: 80, icon: "◉" },
-  { name: "SEO", level: 70, icon: "⌖" },
+  { name: "JavaScript", level: 85, icon: "JS" },
+  { name: "HTML / CSS", level: 92, icon: "</>" },
+  { name: "React.js", level: 88, icon: "⚛" },
+  { name: "Next.js", level: 85, icon: "N" },
+  { name: "Node.js", level: 80, icon: "⬡" },
+  { name: "MongoDB", level: 78, icon: "🍃" },
+  { name: "MySQL", level: 72, icon: "🗄" },
+  { name: "WordPress", level: 90, icon: "W" },
+  { name: "Strapi", level: 82, icon: "S" },
+  { name: "Shopify", level: 88, icon: "◈" },
+  { name: "Wix", level: 85, icon: "◉" },
+  { name: "SEO", level: 80, icon: "⌖" },
+  { name: "App Development", level: 78, icon: "📱" },
+  { name: "Content Writing", level: 85, icon: "✍" },
+  { name: "3D Animation", level: 75, icon: "◭" },
 ];
 
 function SkillCard({ skill, index }: { skill: typeof skills[0]; index: number }) {
